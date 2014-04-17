@@ -4,7 +4,9 @@ namespace Plateau\Navigable\Menus;
 use Illuminate\Support\Collection;
 use Plateau\Navigable\Contracts\NavigableInterface;
 
-class Item extends Collection implements NavigableInterface {
+class Item implements NavigableInterface {
+
+	protected $app;
 
 	// The Menu Text
 	protected $label;
@@ -18,18 +20,28 @@ class Item extends Collection implements NavigableInterface {
 	// Item's Link
 	protected $link;
 	
+	// Child Items
+	protected $items = array();
+
 	// Menu optionnal attributes, eg CSS Classes.. 
 	protected $attributes = array();
 
+	public function __construct(Application $app)
+	{
+		$this->app = $app;
+	}
 
 	public function addItem(NavigableInterface $item)
 	{
+		/*if (! $item instanceof Traversable) {
+			throw new \InvalidArgumentException('Object of type '.get_class($item).' must be Iterable');
+		}*/
 		$this->items[] = $item;
 	}
 
 	public function hasChilds()
 	{
-		return (! $this->isEmpty());
+		return (count($this->items) > 0);
 	}
 
 	public function getChilds()
@@ -43,6 +55,12 @@ class Item extends Collection implements NavigableInterface {
 	}
 
 	// Setters
+	// 
+	public function setActive()
+	{
+		$this->isActive = true;
+	}
+
 	public function setLabel($label)
 	{
 		$this->label = $label;
@@ -63,11 +81,11 @@ class Item extends Collection implements NavigableInterface {
 	{
 		if(isset($this->link))
 		{
-
+			return $this->link;
 		}
 		if(isset($this->routeName))
 		{
-
+			$this->app->make('url')->route($this->routeName);
 		}
 		// Default return '#'
 		return '#';
@@ -77,6 +95,7 @@ class Item extends Collection implements NavigableInterface {
 	{
 		return $this->label;
 	}
+
 
 	/**
 	 * Dynamically retrieve attributes on the menu item.
@@ -113,6 +132,25 @@ class Item extends Collection implements NavigableInterface {
 		
 	}
 
+	public function __set($key, $value)
+	{
+		switch ($key)
+		{
+			case 'link': 
+				$this->setLink($value);
+				break;
 
+			case 'label':
+				$this->setLabel($value);
+				break;
+
+			case 'active':
+				if ($value) $this->setActive();
+				break;
+
+			default:
+				$this->attributes[$key] = $value;
+		}
+	}
 
 }

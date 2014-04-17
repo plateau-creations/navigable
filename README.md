@@ -1,5 +1,7 @@
 # Navigable
-#### Another Menu package for Laravel 4 
+#### Build Menu from any sources, for Laravel 4 
+
+!!Warning!! This is a early alpha version, not suitable for production use.
 
 ## Key Concepts
 

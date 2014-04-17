@@ -20,6 +20,14 @@ class NavigableServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('plateau/navigable');
+
+		$this->registerDependencies();
+	}
+
+	public function registerDependencies()
+	{
+		// Hieu-Le/active
+		$this->app->register('HieuLe\Active\ActiveServiceProvider');
 	}
 
 	/**
@@ -29,10 +37,7 @@ class NavigableServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app['navigable.active'] = $this->app->share(function($app)
-		{
-			return new Active($app['router']);
-		});
+		//
 	}
 
 	/**
